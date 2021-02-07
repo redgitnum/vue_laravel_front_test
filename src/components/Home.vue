@@ -13,6 +13,10 @@
           <div style="margin-right:10px ">name: {{person.name}}</div>
           <div style="margin-right:10px ">surname: {{person.surname}}</div>
           <div style="margin-right:10px ">age: {{person.age}}</div>
+          <button @click="deletePerson(person.id)" class="btn">
+              DELETE ME
+              <div class="loader" :id="'loader' + person.id"></div>
+          </button>
       </div>
   </div>
 </template>
@@ -44,19 +48,59 @@ export default {
                                 .then(response => response.data)
         },
         addPerson: function(){
-            axios.post('http://127.0.0.1:8000/api', this.person)
+            axios.post('http://127.0.0.1:8000/api/add', this.person)
                 .then(response => response.data)
-                .then(data => console.log(data))
+                .then(console.log)
                 .finally(() => {
                     this.person = this.initialValues();
                     this.$refs.form.reset();
-                    this.getPeople();
+                    (this.getPeople())
                 })
+        },
+        deletePerson: function(id){
+            document.getElementById(`loader${id}`).classList.toggle('show');
+            axios
+                .delete('http://127.0.0.1:8000/api/delete', {data: {'id': id}})
+                .then(response => response.data)
+                .finally(() => {
+                    document.getElementById(`loader${id}`).classList.toggle('show');
+                    this.getPeople();
+                    })
         }
     }
 }
 </script>
 
-<style>
+<style scoped>
+.btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2px 5px;
+}
+.loader {
+    display: none;
+    margin-left: 5px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    border-bottom-color: red;
+    animation: spin 0.5s linear infinite;
+}
 
+.show {
+    display: inline-block;
+}
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    50% {
+        transform: rotate(180deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
 </style>
