@@ -49,7 +49,6 @@
 import axios from 'axios'
 import Pusher from 'pusher-js'
 
-    
 export default {
     data: function(){
         return{
